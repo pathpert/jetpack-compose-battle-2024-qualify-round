@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="q2_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas dictum lacinia. Integer arcu\nneque, porttitor ac metus quis, iaculis molestie\nmagna. Vivamus molestie justo sed nulla lacinia,\nquis fringilla lorem imperdiet. Proin in quam vel odio\niaculis fringilla</string>
+    <string name="q2_header">Lorem ipsum dolor sit amet</string>
+</resources>

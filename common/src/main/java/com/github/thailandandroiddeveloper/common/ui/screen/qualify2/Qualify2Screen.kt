@@ -15,20 +15,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,11 +37,9 @@ import com.github.thailandandroiddeveloper.common.ui.preview.Pixel7
 import com.github.thailandandroiddeveloper.common.ui.theme.AppTheme
 import com.github.thailandandroiddeveloper.common.ui.theme.LightColors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Qualify2Screen() {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    val selectedIndex by remember { mutableIntStateOf(3) }
 
     Scaffold(
         content = { paddingValues ->
@@ -64,7 +62,7 @@ fun Qualify2Screen() {
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            "Skip",
+                            text = "Skip",
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -78,13 +76,13 @@ fun Qualify2Screen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Lorem ipsum dolor sit amet",
+                        text = stringResource(R.string.q2_header),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas dictum lacinia. Integer arcu\nneque, porttitor ac metus quis, iaculis molestie\nmagna. Vivamus molestie justo sed nulla lacinia,\nquis fringilla lorem imperdiet. Proin in quam vel odio\niaculis fringilla",
+                        text = stringResource(R.string.q2_description),
                         modifier = Modifier
                             .width(347.dp)
                             .height(120.dp),
@@ -103,41 +101,9 @@ fun Qualify2Screen() {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .width(16.dp)
-                                .height(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer),
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(16.dp)
-                                .height(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer),
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(16.dp)
-                                .height(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer),
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(32.dp)
-                                .height(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(16.dp)
-                                .height(16.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer),
-                        )
+                        repeat(5) {
+                            IndicatorView(selected = it == selectedIndex)
+                        }
                     }
                 }
             }
@@ -163,6 +129,24 @@ fun Qualify2Screen() {
                 }
             }
         }
+    )
+}
+
+@Composable
+fun IndicatorView(selected: Boolean) {
+    Box(
+        modifier = if(selected)
+            Modifier
+                .width(32.dp)
+                .height(16.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary)
+        else
+            Modifier
+                .width(16.dp)
+                .height(16.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
     )
 }
 
