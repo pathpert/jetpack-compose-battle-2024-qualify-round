@@ -39,8 +39,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,13 +64,9 @@ fun Qualify3Screen() {
         R.drawable.img_qualify_3_photo_2,
         R.drawable.img_qualify_3_photo_3
     )
-    val textList = listOf(
-        "Duis dignissim pulvinar lectus imperdiet tempus. Curabitur fringilla commodo consectetur. Sed congue blandit nibh.",
-        "Morbi sed sagittis justo, at pulvinar ipsum. Praesent massa metus, interdum at suscipit a, interdum vel orci. Pellentesque in sapien. Integer faucibus mauris ac luctus aliquam accumsan.",
-        "Duis dignissim pulvinar lectus imperdiet tempus. Curabitur fringilla commodo.",
-        "Ut hendrerit neque nec accumsan hendrerit. Fusce lobortis rhoncus erat, a blandit nibh molestie vel. Cras commodo ligula ex, vitae venenatis lacus facilisis eget."
-    )
+    val descriptionTexts = stringArrayResource(id = R.array.description_texts)
     val selectedIndex by remember { mutableIntStateOf(0) }
+    val tagSelectedList  = listOf(0)
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -107,7 +106,7 @@ fun Qualify3Screen() {
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_qualify_3_copy),
-                                contentDescription = "Localized description",
+                                contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
@@ -116,7 +115,7 @@ fun Qualify3Screen() {
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_qualify_3_calendar),
-                                contentDescription = "Localized description",
+                                contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
@@ -125,7 +124,7 @@ fun Qualify3Screen() {
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_qualify_3_menu),
-                                contentDescription = "Localized description",
+                                contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
@@ -145,20 +144,10 @@ fun Qualify3Screen() {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(3) {
-                        Card(
-                            Modifier
-                                .width(160.dp)
-                                .height(320.dp),
-                            elevation = CardDefaults.cardElevation(0.dp),
-                            shape = MaterialTheme.shapes.large,
-                            border = BorderStroke(2.dp, if(it == selectedIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer),
-                        ) {
-                            Image(
-                                painter = painterResource(id = imageList[it]),
-                                contentDescription = "",
-                                contentScale = ContentScale.FillBounds
-                            )
-                        }
+                        CarouselImageView(
+                            image = painterResource(id = imageList[it]),
+                            selected = selectedIndex == it
+                        )
                     }
                 }
                 LazyRow(
@@ -166,67 +155,106 @@ fun Qualify3Screen() {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(4) {
-                        InputChip(
-                            selected = false,
-                            onClick = { /*TODO*/ },
-                            colors = InputChipDefaults.inputChipColors(
-                                labelColor = MaterialTheme.colorScheme.outline
-                            ),
-                            shape = MaterialTheme.shapes.small,
-                            label = {
-                                Text(
-                                    text = "Tag ${it+1}",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(horizontal = 5.dp)
-                                )
-                            }
-                        )
+                        TagView(label = "Tag ${it+1}", selected = tagSelectedList.contains(it))
                     }
                 }
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(4) {
-                        Card(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp).height(96.dp)
-                                .fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            ),
-                            border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.surfaceVariant),
-                            elevation = CardDefaults.cardElevation(0.dp)
-                        ) {
-                            Row(Modifier.padding(16.dp)) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.img_qualify_3_sender),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .clip(RoundedCornerShape(48.dp))
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text(
-                                        text = "Lorem Ipsum",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Text(
-                                        text = textList[it],
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
+                        InfoCard(description = descriptionTexts[it])
                     }
                 }
             }
         }
     )
+}
+
+@Composable
+fun CarouselImageView(image: Painter, selected: Boolean = false) {
+    Card(
+        Modifier
+            .width(160.dp)
+            .height(320.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
+        shape = MaterialTheme.shapes.large,
+        border = BorderStroke(2.dp, if(selected) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Image(
+            painter = image,
+            contentDescription = "",
+            contentScale = ContentScale.FillBounds
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TagView(label: String, selected: Boolean) {
+    InputChip(
+        selected = selected,
+        onClick = { /*TODO*/ },
+        border = InputChipDefaults.inputChipBorder(
+            borderColor = MaterialTheme.colorScheme.outline,
+            selectedBorderColor = MaterialTheme.colorScheme.primary,
+            selectedBorderWidth = 1.dp
+        ),
+        colors = InputChipDefaults.inputChipColors(
+            selectedLabelColor = MaterialTheme.colorScheme.primary,
+            labelColor = MaterialTheme.colorScheme.outline,
+            containerColor = Color.Transparent,
+            selectedContainerColor = Color.Transparent
+        ),
+        shape = MaterialTheme.shapes.small,
+        label = {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 5.dp)
+            )
+        }
+    )
+}
+
+@Composable
+fun InfoCard(description: String) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .height(96.dp)
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(0.dp)
+    ) {
+        Row(Modifier.padding(16.dp)) {
+            Image(
+                painter = painterResource(id = R.drawable.img_qualify_3_sender),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(48.dp))
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(
+                    text = "Lorem Ipsum",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
 }
 
 // region Read-only because we use this to process your score.
